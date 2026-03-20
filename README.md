@@ -8,14 +8,8 @@ Initial Django REST Framework backend scaffold for a content monitoring and flag
 - `content_monitoring/`: Main application containing models, serializers, views, urls, and services.
 - `requirements.txt`: Python dependencies.
 
-## Current domain models
-
-- `Keyword`: tracks unique monitoring keywords.
-- `ContentItem`: stores monitored content metadata and body text.
-- `Flag`: joins a keyword to a content item with a score and review status.
-
 ## Next steps
 
 - Install dependencies with `pip install -r requirements.txt`.
-- Run migrations with `python manage.py migrate`.
+- Run migrations with `python manage.py makemigrations && python manage.py migrate`.
 - Start the server with `python manage.py runserver`.
