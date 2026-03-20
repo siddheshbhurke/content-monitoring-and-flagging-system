@@ -1,7 +1,6 @@
 from django.contrib import admin
 
-from .models import ContentItem, Flag, Keyword
+from .models import ContentItem, FlagRecord
 
-admin.site.register(Keyword)
 admin.site.register(ContentItem)
-admin.site.register(Flag)
+admin.site.register(FlagRecord)

@@ -1,10 +1,9 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 
-from .views import FlagListAPIView, FlagPartialUpdateAPIView, KeywordCreateAPIView, ScanAPIView
+from .views import ContentItemViewSet, FlagRecordViewSet
 
-urlpatterns = [
-    path('keywords/', KeywordCreateAPIView.as_view(), name='keyword-create'),
-    path('scan/', ScanAPIView.as_view(), name='scan'),
-    path('flags/', FlagListAPIView.as_view(), name='flag-list'),
-    path('flags/<int:pk>/', FlagPartialUpdateAPIView.as_view(), name='flag-partial-update'),
-]
+router = DefaultRouter()
+router.register('content-items', ContentItemViewSet, basename='content-item')
+router.register('flags', FlagRecordViewSet, basename='flag-record')
+
+urlpatterns = router.urls
