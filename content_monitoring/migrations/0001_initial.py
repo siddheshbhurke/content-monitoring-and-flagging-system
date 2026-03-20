@@ -12,101 +12,52 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Keyword',
+            name="ContentItem",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        verbose_name='ID',
+                        verbose_name="ID",
                     ),
                 ),
-                ('name', models.CharField(max_length=100, unique=True)),
+                ("title", models.CharField(max_length=255)),
+                ("body", models.TextField()),
+                ("source", models.CharField(blank=True, max_length=255)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
             options={
-                'ordering': ['name'],
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='ContentItem',
+            name="FlagRecord",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        verbose_name='ID',
+                        verbose_name="ID",
                     ),
                 ),
-                ('title', models.CharField(max_length=255)),
-                ('body', models.TextField()),
-                ('source', models.CharField(max_length=255)),
-                ('last_updated', models.DateTimeField(auto_now=True)),
-            ],
-            options={
-                'ordering': ['-last_updated', 'title'],
-                'indexes': [
-                    models.Index(fields=['source'], name='content_source_idx'),
-                    models.Index(fields=['-last_updated'], name='content_updated_idx'),
-                ],
-            },
-        ),
-        migrations.CreateModel(
-            name='Flag',
-            fields=[
+                ("status", models.CharField(max_length=50)),
+                ("reason", models.TextField(blank=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
                 (
-                    'id',
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name='ID',
-                    ),
-                ),
-                ('score', models.DecimalField(decimal_places=2, max_digits=5)),
-                (
-                    'status',
-                    models.CharField(
-                        choices=[
-                            ('pending', 'Pending'),
-                            ('relevant', 'Relevant'),
-                            ('irrelevant', 'Irrelevant'),
-                        ],
-                        default='pending',
-                        max_length=20,
-                    ),
-                ),
-                ('last_reviewed_at', models.DateTimeField(blank=True, null=True)),
-                (
-                    'content_item',
+                    "content_item",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name='flags',
-                        to='content_monitoring.contentitem',
-                    ),
-                ),
-                (
-                    'keyword',
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name='flags',
-                        to='content_monitoring.keyword',
+                        related_name="flags",
+                        to="content_monitoring.contentitem",
                     ),
                 ),
             ],
             options={
-                'ordering': ['-last_reviewed_at', '-id'],
-                'indexes': [
-                    models.Index(fields=['status'], name='flag_status_idx'),
-                    models.Index(fields=['keyword', 'status'], name='flag_keyword_status_idx'),
-                    models.Index(fields=['content_item', 'status'], name='flag_content_status_idx'),
-                ],
-                'constraints': [
-                    models.UniqueConstraint(fields=('keyword', 'content_item'), name='unique_keyword_content_flag'),
-                ],
+                "ordering": ["-created_at"],
             },
         ),
     ]
