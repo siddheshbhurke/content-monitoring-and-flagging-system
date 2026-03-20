@@ -1,26 +1,8 @@
-from django.utils import timezone
-
-from content_monitoring.models import Flag
-from content_monitoring.services.suppression_service import SuppressionService
+from content_monitoring.models import FlagRecord
 
 
 class FlaggingService:
-    """Service layer for flag creation and review state management."""
+    """Service layer placeholder for flagging-related business logic."""
 
-    def __init__(self, suppression_service: SuppressionService | None = None) -> None:
-        self.suppression_service = suppression_service or SuppressionService()
-
-    def create_flag(self, validated_data: dict) -> Flag:
-        validated_data.setdefault(
-            'status',
-            self.suppression_service.default_status_for_score(validated_data['score']),
-        )
-        if validated_data['status'] != Flag.Status.PENDING:
-            validated_data.setdefault('last_reviewed_at', timezone.now())
-        return Flag.objects.create(**validated_data)
-
-    def update_flag(self, flag: Flag, validated_data: dict) -> Flag:
-        flag.status = validated_data.get('status', flag.status)
-        flag.last_reviewed_at = timezone.now()
-        flag.save(update_fields=['status', 'last_reviewed_at'])
-        return flag
+    def create_flag(self, validated_data: dict) -> FlagRecord:
+        return FlagRecord.objects.create(**validated_data)

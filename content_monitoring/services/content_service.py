@@ -1,11 +1,8 @@
-from content_monitoring.services.scan_service import ScanService
+from content_monitoring.models import ContentItem
 
 
 class ContentService:
-    """Service layer for content-related workflows."""
+    """Service layer placeholder for content-related business logic."""
 
-    def __init__(self, scan_service: ScanService | None = None) -> None:
-        self.scan_service = scan_service or ScanService()
-
-    def scan_dataset(self, dataset_path: str | None = None) -> dict:
-        return self.scan_service.scan_dataset(dataset_path=dataset_path)
+    def create_content(self, validated_data: dict) -> ContentItem:
+        return ContentItem.objects.create(**validated_data)

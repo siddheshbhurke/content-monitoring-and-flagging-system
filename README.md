@@ -233,3 +233,16 @@ python manage.py test
 - The scan endpoint is designed for development/demo workflows and can optionally accept a local dataset path override.
 - Reviewers update flag status manually through the `PATCH /flags/{id}/` endpoint.
 - Local development uses SQLite; production concerns such as authentication, authorization, background jobs, and audit history are not yet implemented.
+Initial Django REST Framework backend scaffold for a content monitoring and flagging system.
+
+## Structure
+
+- `config/`: Django project configuration.
+- `content_monitoring/`: Main application containing models, serializers, views, urls, and services.
+- `requirements.txt`: Python dependencies.
+
+## Next steps
+
+- Install dependencies with `pip install -r requirements.txt`.
+- Run migrations with `python manage.py makemigrations && python manage.py migrate`.
+- Start the server with `python manage.py runserver`.

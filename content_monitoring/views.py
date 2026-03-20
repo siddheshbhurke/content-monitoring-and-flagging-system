@@ -1,65 +1,37 @@
-from rest_framework import generics, status
+from rest_framework import status, viewsets
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
-from .models import Flag, Keyword
-from .serializers import (
-    FlagSerializer,
-    FlagUpdateSerializer,
-    KeywordSerializer,
-    ScanRequestSerializer,
-    ScanSummarySerializer,
-)
+from .models import ContentItem, FlagRecord
+from .serializers import ContentItemSerializer, FlagRecordSerializer
 from .services.content_service import ContentService
 from .services.flagging_service import FlaggingService
-from .services.keyword_service import KeywordService
 
 
-class ServiceMixin:
-    service_class = None
-
-    def get_service(self):
-        if self.service_class is None:
-            raise ValueError('service_class must be defined')
-        return self.service_class()
-
-
-class KeywordCreateAPIView(ServiceMixin, generics.CreateAPIView):
-    queryset = Keyword.objects.all()
-    serializer_class = KeywordSerializer
-    service_class = KeywordService
-
-    def perform_create(self, serializer):
-        serializer.instance = self.get_service().create_keyword(serializer.validated_data)
-
-
-class ScanAPIView(ServiceMixin, APIView):
+class ContentItemViewSet(viewsets.ModelViewSet):
+    queryset = ContentItem.objects.all()
+    serializer_class = ContentItemSerializer
     service_class = ContentService
 
-    def post(self, request, *args, **kwargs):
-        serializer = ScanRequestSerializer(data=request.data)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        summary = self.get_service().scan_dataset(dataset_path=serializer.validated_data.get('dataset_path'))
-        response_serializer = ScanSummarySerializer(summary)
-        return Response(response_serializer.data, status=status.HTTP_200_OK)
+        service = self.service_class()
+        content_item = service.create_content(serializer.validated_data)
+        output = self.get_serializer(content_item)
+        headers = self.get_success_headers(output.data)
+        return Response(output.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class FlagListAPIView(generics.ListAPIView):
-    queryset = Flag.objects.select_related('keyword', 'content_item').all()
-    serializer_class = FlagSerializer
-
-
-class FlagPartialUpdateAPIView(ServiceMixin, generics.UpdateAPIView):
-    queryset = Flag.objects.select_related('keyword', 'content_item').all()
-    serializer_class = FlagUpdateSerializer
-    http_method_names = ['patch']
+class FlagRecordViewSet(viewsets.ModelViewSet):
+    queryset = FlagRecord.objects.all()
+    serializer_class = FlagRecordSerializer
     service_class = FlaggingService
 
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', True)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        updated_flag = self.get_service().update_flag(instance, serializer.validated_data)
-        response_serializer = FlagSerializer(updated_flag)
-        return Response(response_serializer.data)
+        service = self.service_class()
+        flag_record = service.create_flag(serializer.validated_data)
+        output = self.get_serializer(flag_record)
+        headers = self.get_success_headers(output.data)
+        return Response(output.data, status=status.HTTP_201_CREATED, headers=headers)
