@@ -1,0 +1,12 @@
+[
+  {
+    "source": "feed-001",
+    "title": "Platform alert bulletin",
+    "body": "An alert was raised for the monitored platform."
+  },
+  {
+    "source": "feed-002",
+    "title": "Daily summary",
+    "body": "Routine monitoring summary with no escalation."
+  }
+]
